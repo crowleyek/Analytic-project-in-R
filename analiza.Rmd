@@ -8,8 +8,8 @@ theme: united
 
 
 
-Raport dotyczy opóŸnieñ po³¹czeñ lotniczych w USA w lipcu 2017 r. 
-Uwzglednia dane udostêpnione przez Departament Transportu Stanów Zjednoczonych. Sa to m.in.:
+Raport dotyczy opÃ³Å¸nieÃ± poÂ³Â¹czeÃ± lotniczych w USA w lipcu 2017 r. 
+Uwzglednia dane udostÃªpnione przez Departament Transportu StanÃ³w Zjednoczonych. Sa to m.in.:
 
 - linie lotnicze,
 - lotniska,
@@ -20,45 +20,34 @@ Uwzglednia dane udostêpnione przez Departament Transportu Stanów Zjednoczonych. 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-```{r, echo=FALSE}
-library(DBI)
-library(odbc)
-con <- DBI::dbConnect(odbc::odbc(), 
-                      Driver = "SQL Server", 
-                      Server = "mssql-2016.labs.wmi.amu.edu.pl", 
-                      Database = "dbad_flights", 
-                      UID = "dbad_s437593",
-                      Trusted_Connection = "True")
-```
 
-
-# 1.Jakie bylo œrednie opóŸnienie przylotu?
+# 1.Jakie bylo Å“rednie opoznienie przylotu?
 ```{r avg_delay, echo=FALSE}
 delayavg <-  DBI::dbGetQuery(con, "SELECT avg(arr_delay_new) as 'Avg delay' 
                              FROM Flight_delays ")
 delayavg
 ```
 
-# 2.Jakie by³o maksymalne opóŸnienie przylotu?
+# 2.Jakie bylo maksymalne opÃ³znienie przylotu?
 ```{r max_delay, echo=FALSE}
 delaymax <- DBI::dbGetQuery(con, "SELECT max(arr_delay_new) as 'Max delay' 
                             FROM Flight_delays")
 delaymax
 ```
 
-# 3.Który lot mial najwieksze opóŸnienie przylotu?
+# 3.KtÃ³ry lot mial najwieksze opÃ³znienie przylotu?
 ```{r flightmax_delay, echo=FALSE}
 delayflight <- DBI::dbGetQuery(con, "SELECT carrier, origin_city_name, dest_city_name, fl_date, arr_delay_new FROM Flight_delays WHERE arr_delay_new = (SELECT max(arr_delay_new) FROM Flight_delays)")
 delayflight
 ```
 
-# 4.Które dni tygodnia s¹ najgorsze do podró¿owania?
+# 4.KtÃ³re dni tygodnia sa najgorsze do podrÃ³Â¿owania?
 ```{r weekdelay, echo=FALSE}
 delayweek <- DBI::dbGetQuery(con, "SELECT weekday_name, avg(arr_delay_new) as'avg_delay' FROM Weekdays JOIN Flight_delays ON weekday_id=day_of_week GROUP BY weekday_name")
 delayweek
 ```
 
-# 5.Które linie lotnicze lataj¹ce z San Francisco (SFO) maj¹ najmniejsze opóŸnienia przylotu?
+# 5.KtÃ³re linie lotnicze latajace z San Francisco (SFO) maja najmniejsze opÃ³onienia przylotu?
 ```{r SFO_delays, echo=FALSE}
 sfodelay <- DBI::dbGetQuery(con, "SELECT A.airline_name,
        (SELECT avg(F.arr_delay_new) AS 'avg_delay'
@@ -72,7 +61,7 @@ ORDER BY 'time' DESC;")
 sfodelay
 ```
 
-# 6.Jaka czêœæ linii lotniczych ma regularne opóŸnienia, tj. jej lot ma œrednio co najmniej 10 min. opóŸnienia?
+# 6.Jaka czesc linii lotniczych ma regularne opÃ³znienia, tj. jej lot ma Å“rednio co najmniej 10 min. opÃ³znienia?
 ```{r regdelays, echo=FALSE}
 regulardelays <- DBI::dbGetQuery(con, "SELECT
 (SELECT count(*) 
@@ -83,14 +72,14 @@ from (select airline_id from flight_delays
 regulardelays
 ```
 
-# 7.Jak opóŸnienia wylotów wp³ywaj¹ na opóŸnienia przylotów?
+# 7.Jak opÃ³znienia wylotÃ³w wplywaja na opÃ³znienia przylotÃ³w?
 ```{r pears, echo=FALSE}
 pearson <- DBI::dbGetQuery(con, "SELECT ((SUM(dep_delay_new*arr_delay_new)-(SUM(dep_delay_new)*SUM(arr_delay_new))/COUNT(*)))/(SQRT(SUM(dep_delay_new*dep_delay_new)-(SUM(dep_delay_new)*SUM(dep_delay_new))/COUNT(*))*SQRT(SUM(arr_delay_new*arr_delay_new)-(SUM(arr_delay_new)*SUM(arr_delay_new))/COUNT(*))) as 'Pearson r' 
 FROM Flight_delays")
 pearson
 ```
 
-# 8.Która linia lotnicza mia³a najwiêkszy wzrost (ró¿nica) œredniego opóŸnienia przylotów w ostatnim tygodniu miesi¹ca, tj. miêdzy 1-23 a 24-31 lipca?
+# 8.KtÃ³ra linia lotnicza miala najwiekszy wzrost (rÃ³znica) sredniego opÃ³znienia przylotÃ³w w ostatnim tygodniu miesiaca, tj. miedzy 1-23 a 24-31 lipca?
 ```{r lastdelay, echo=FALSE}
 delaylast <- DBI::dbGetQuery(con, "WITH firstaverage AS (SELECT A.airline_name, avg(F.arr_delay_new) as 'delay_increase1' 
 FROM Flight_delays F JOIN Airlines A on F.airline_id = A.airline_id 
@@ -107,7 +96,7 @@ order by 'Delay_increase' DESC")
 delaylast
 ```
 
-# 9.Które linie lotnicze lataj¹ zarówno na trasie SFO › PDX (Portland), jak i SFO › EUG (Eugene)?
+# 9.KtÃ³re linie lotnicze lataja zarÃ³wno na trasie SFO â€º PDX (Portland), jak i SFO â€º EUG (Eugene)?
 ```{r sfo, echo=FALSE}
 portlandeugene <- DBI::dbGetQuery(con, "(SELECT distinct A.airline_name 
 FROM Airlines A join Flight_delays F ON A.airline_id = F.airline_id
@@ -119,7 +108,7 @@ WHERE F.origin = 'SFO' AND F.dest = 'PDX')")
 portlandeugene 
 ```
 
-# 10.Jak najszybciej dostaæ siê z Chicago do Stanfordu, zak³adaj¹c wylot po 14:00 czasu lokalnego?
+# 10.Jak najszybciej dostac sie z Chicago do Stanfordu, zakladajac wylot po 14:00 czasu lokalnego?
 ```{r localtime, echo=FALSE}
 timelocal <- DBI::dbGetQuery(con, "SELECT origin 'Origin', dest 'Desitnation', avg(arr_delay_new) 'Delay'
 FROM Flight_delays 
