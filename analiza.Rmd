@@ -1,6 +1,5 @@
 ---
 title: 'Proj. analityczny: linie lotnicze'
-author: "Adrianna Hornicka"
 date: "28 maja 2019"
 output: pdf_document
 theme: united
@@ -8,8 +7,8 @@ theme: united
 
 
 
-Raport dotyczy opóŸnieñ po³¹czeñ lotniczych w USA w lipcu 2017 r. 
-Uwzglednia dane udostêpnione przez Departament Transportu Stanów Zjednoczonych. Sa to m.in.:
+Raport dotyczy opóznien polaczeñ lotniczych w USA w lipcu 2017 r. 
+Uwzglednia dane udostepnione przez Departament Transportu Stanów Zjednoczonych. Sa to m.in.:
 
 - linie lotnicze,
 - lotniska,
